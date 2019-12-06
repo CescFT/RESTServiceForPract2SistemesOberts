@@ -75,9 +75,9 @@ public class autenticacioClientWeb extends AbstractFacade<credentialsClient> {
                 if (c.getTokenAutoritzacio() == null) {
                     c.setTokenAutoritzacio(new token(token));
                     super.edit(c);
-                    return Response.ok("YOUR TOKEN FOR DO IMPORTANT THINGS IS:\n\n" + c.getTokenAutoritzacio()).build();
+                    return Response.ok(c.getTokenAutoritzacio()).build();
                 } else {
-                    return Response.ok().entity("Aquest usuari ja té un token. Es aquest:\n\n" + c.getTokenAutoritzacio()).build();
+                    return Response.ok().entity(c.getTokenAutoritzacio()).build();
                 }
             } else {
                 return Response.status(Response.Status.NOT_FOUND).entity("No ets un client autoritzat.").build();
