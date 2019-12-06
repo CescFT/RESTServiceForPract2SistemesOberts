@@ -164,7 +164,7 @@ public class autenticacioClientWeb extends AbstractFacade<credentialsClient> {
 
         credentialsClient c = super.findClientAutoritizat(username);
         if (c != null) {
-            return Response.ok().entity("La informació del client autoritzat:\n" + c + "\n").build();
+            return Response.ok().entity(c).build();
         } else {
             return Response.status(Response.Status.NOT_FOUND).entity("No s'ha trobat cap client amb aquest username").build();
         }

@@ -55,7 +55,7 @@ public class HabitacioFacadeREST extends AbstractFacade<Habitacio> {
         } else {
             //mirar els camps q s'omplen buits i omplir-los jo!
             super.create(entity);
-            return Response.status(Response.Status.CREATED).entity("Nova entrada\n" + entity + "\nAfegida correctament.").build();
+            return Response.status(Response.Status.CREATED).entity(entity).build();
         }
     }
 
@@ -81,7 +81,7 @@ public class HabitacioFacadeREST extends AbstractFacade<Habitacio> {
                 return Response.status(Response.Status.NO_CONTENT).entity("No hi ha cap habitació amb aquest id").build();
             }
             super.edit(entity);
-            return Response.ok().entity(entity + "\nha estat modificada correctament.").build();
+            return Response.ok().entity(entity).build();
         }
     }
 

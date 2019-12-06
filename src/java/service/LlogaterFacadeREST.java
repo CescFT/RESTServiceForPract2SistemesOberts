@@ -141,7 +141,7 @@ public class LlogaterFacadeREST extends AbstractFacade<Llogater> {
                     hab1.setLlogater(llogater);
 
                     getEntityManager().merge(hab1);
-                    return Response.status(Response.Status.CREATED).entity(hab1 + "\n\nHa estat llogada per: " + llogater + "\n\nOperació finalitada.").build();
+                    return Response.status(Response.Status.CREATED).entity(hab1).build();
                 } else {
                     return Response.status(Response.Status.NO_CONTENT).entity("No compleix els requisits.").build();
                 }
@@ -202,7 +202,7 @@ public class LlogaterFacadeREST extends AbstractFacade<Llogater> {
                 return Response.status(Response.Status.NO_CONTENT).entity("No es pot generar perquè no hi ha un JSON vàlid o informat").build();
             } else {
                 super.create(entity);
-                return Response.status(Response.Status.CREATED).entity("Llogater:\n " + entity + "\ncreat amb èxit.").build();
+                return Response.status(Response.Status.CREATED).entity(entity).build();
             }
         } else {
             return Response.status(Response.Status.UNAUTHORIZED).entity("No t'has autenticat :(").build();
@@ -228,7 +228,7 @@ public class LlogaterFacadeREST extends AbstractFacade<Llogater> {
                 return Response.status(Response.Status.NO_CONTENT).entity("No hi ha JSON informat o és invàlid").build();
             } else {
                 super.edit(entity);
-                return Response.ok().entity("Llogater " + entity + "\n\n modificat correctament.").build();
+                return Response.ok().entity(entity).build();
             }
         } else {
             return Response.status(Response.Status.UNAUTHORIZED).entity("No t'has autenticat :(").build();
