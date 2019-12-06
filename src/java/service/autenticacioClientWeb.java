@@ -12,7 +12,6 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import autenticacio.token;
 import javax.ws.rs.POST;
@@ -56,25 +55,23 @@ public class autenticacioClientWeb extends AbstractFacade<credentialsClient> {
      * així retorna el token del client per continuar amb l'autenticació. Es
      * crida quan la url és : /webresources/autenticacio
      *
-     * @param username nom del client
-     * @param passwd contrassenya del client en clar
+     * @param client nom del client
      * @return token del client
      */
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response authenticationClient(@FormParam("username") String username,
-            @FormParam("password") String passwd) {
-        System.out.println(username);
-        System.out.println(passwd);
-        if (username == null || passwd == null) {
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response authenticationClient(credentialsClient client) {
+        if(client == null)
+            return Response.status(Response.Status.NO_CONTENT).entity("client null").build();
+        if (client.getUsername() == null || client.getPassword() == null) {
             return Response.status(Response.Status.FORBIDDEN).entity("Falta usuari o contrassenya").build();
         }
         try {
             //Autenticació de l'usuari fent servir les credencials donades
-            if (authenticateClient(username, passwd)) {
-                String token = getToken(username);
-                credentialsClient c = super.findClientAutoritizat(username);
+            if (authenticateClient(client.getUsername(), client.getPassword())) {
+                String token = getToken(client.getUsername());
+                credentialsClient c = super.findClientAutoritizat(client.getUsername());
                 if (c.getTokenAutoritzacio() == null) {
                     c.setTokenAutoritzacio(new token(token));
                     super.edit(c);
