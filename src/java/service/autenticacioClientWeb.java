@@ -156,7 +156,7 @@ public class autenticacioClientWeb extends AbstractFacade<credentialsClient> {
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response getClientAutenticate(@QueryParam("username") String username) {
         if (username == null) {
-            return Response.status(Response.Status.NO_CONTENT).build();
+            return Response.status(Response.Status.NO_CONTENT).entity("El nom d'usuari és null o buit.").build();
         }
 
         credentialsClient c = super.findClientAutoritizat(username);
