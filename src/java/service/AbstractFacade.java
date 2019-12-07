@@ -2,6 +2,7 @@ package service;
 
 import autenticacio.credentialsClient;
 import autenticacio.token;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -123,17 +124,17 @@ public abstract class AbstractFacade<T> {
      * @param ll llogater
      * @return habitacio
      */
-    public Habitacio returnHabitacioClient(Llogater ll) {
+    public List<Habitacio> returnHabitacioClient(Llogater ll) {
         try {
-            Habitacio hab = new Habitacio();
+            
             List<Habitacio> llistaHabitacions = findAllRooms();
+            List<Habitacio> habitacionsClient = new ArrayList<Habitacio>();
             for (Habitacio h : llistaHabitacions) {
                 if (h.getLlogater().equals(ll)) {
-                    hab = h;
-                    break;
+                    habitacionsClient.add(h); 
                 }
             }
-            return hab;
+            return habitacionsClient;
         } catch (NullPointerException e) {
             return null;
         }

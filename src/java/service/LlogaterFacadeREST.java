@@ -103,7 +103,7 @@ public class LlogaterFacadeREST extends AbstractFacade<Llogater> {
             if (super.tokenVerificat(json)) {
                 this.setToken(json);
                 this.setClient(super.whoDoneThisPetition(this.getToken()));
-                return Response.ok().entity("Token emmagatzemat correctament:\n\n" + this.getToken() + "\nUsuari:" + this.getClient().getUsername()).build();
+                return Response.ok().entity("Token emmagatzemat correctament:\n\n" + this.getToken().getTokenAutoritzacio() + "\nUsuari:" + this.getClient().getUsername()).build();
             } else {
                 return Response.status(Response.Status.NO_CONTENT).entity("El token no es correcte").build();
             }
@@ -252,11 +252,15 @@ public class LlogaterFacadeREST extends AbstractFacade<Llogater> {
             Llogater tenant = super.find(Long.valueOf(id));
             if (tenant != null) {
                 if (super.isTenant(super.findAllRooms(), tenant)) {
-                    Habitacio hab = super.returnHabitacioClient(tenant);
-                    hab.setLlogater(null);
-                    getEntityManager().merge(hab);
+                    List<Habitacio> llistaHabitacionsTenant = super.returnHabitacioClient(tenant);
+                    
+                    for (Habitacio hab : llistaHabitacionsTenant){
+                        hab.setLlogater(null);
+                        getEntityManager().merge(hab);
+                    }
+
                     super.remove(tenant);
-                    return Response.ok().entity("Llogater eliminat correctament i la habitacio ara es lliure.").build();
+                    return Response.ok().entity("Llogater eliminat correctament i "+llistaHabitacionsTenant.size()+"habitacio/ns lliures.").build();
                 }
             }
             return Response.status(Response.Status.NO_CONTENT).entity(id + " no disponible").build();
