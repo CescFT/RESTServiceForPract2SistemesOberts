@@ -174,6 +174,27 @@ public class HabitacioFacadeREST extends AbstractFacade<Habitacio> {
         }
 
     }
+    
+    @GET
+    @Path("allRooms")
+    @Produces({"application/json", "application/xml"})
+    public Response allHabitacions(@QueryParam("sort") String criterion){
+        List<Habitacio> llistaHabitacions = new ArrayList<Habitacio>();
+        if(criterion == null)
+            return Response.status(Response.Status.BAD_REQUEST).entity("No hi ha criteri").build();
+        try{
+            llistaHabitacions = super.findRoomsWithCriteria(criterion);
+            if(llistaHabitacions!= null){
+                GenericEntity<List<Habitacio>> llista = new GenericEntity<List<Habitacio>>(llistaHabitacions) {
+                };
+                return Response.ok().entity(llista).build();
+            }else{
+                return Response.status(Response.Status.BAD_REQUEST).entity("No hi ha habitacions.").build();
+            }
+        }catch(NullPointerException e){
+            return Response.status(Response.Status.NO_CONTENT).entity("null "+ criterion).build();
+        }
+    }
 
     /**
      * Mètode privat que et retorna totes les habitacions
