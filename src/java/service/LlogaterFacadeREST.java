@@ -112,6 +112,14 @@ public class LlogaterFacadeREST extends AbstractFacade<Llogater> {
         }
     }
 
+    @GET
+    @Path("getTokenAutenticat")
+    @Produces({"application/json", "application/xml"})
+    public Response getTokenAutenticat(){
+        if(this.getToken() == null)
+            return Response.status(Response.Status.NO_CONTENT).entity("token null").build();
+        return Response.status(Response.Status.OK).entity(this.getToken()).build();
+    }
     /**
      * Mètode HTTP POST que permet fer el renting d'un llogater a una habitació.
      * S'executa quan la url és: /webresources/tenant/id/rent
