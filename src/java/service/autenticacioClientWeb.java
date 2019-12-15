@@ -48,6 +48,35 @@ public class autenticacioClientWeb extends AbstractFacade<credentialsClient> {
     public autenticacioClientWeb() {
         super(credentialsClient.class);
     }
+    
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/newClient")
+    public Response createClientWeb(credentialsClient client){
+        if(client == null)
+            return Response.status(Response.Status.NO_CONTENT).entity("No hi ha informació.").build();
+        
+        if(client.getUsername().equals("") || null == client.getUsername())
+            return Response.status(Response.Status.NO_CONTENT).entity("No hi ha el nom d'usuari.").build();
+        
+        if(client.getPassword().equals("") || null == client.getPassword())
+            return Response.status(Response.Status.NO_CONTENT).entity("No hi ha la contrassenya.").build();
+        
+        if(client.getEmail()==null || client.getEmail().equals(""))
+            return Response.status(Response.Status.NO_CONTENT).entity("No hi ha correu electronic.").build();
+        
+        try{
+            credentialsClient clientW=super.findClientAutoritizat(client.getUsername());
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Ja existeix un usuari amb aquest nom").build();
+        }catch(Exception e){
+            super.create(client);
+        }
+        
+        
+        return Response.status(Response.Status.CREATED).entity(client).build();
+        //return Response.status(Response.Status.OK).entity(client).build();
+    }
 
     /**
      * Mètode HTTP POST que permet l'autenticació amb els clients. Comprova que

@@ -25,12 +25,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 })
 
 public class credentialsClient implements Serializable {
-
+    @Id
     @Column(name = "USERNAME")
     @Size(max = 500)
     private String username;
 
-    @Id
+    
     @Column(name = "PASSWORD")
     @Size(max = 500)
     private String password;
