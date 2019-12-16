@@ -172,7 +172,7 @@ public class autenticacioClientWeb extends AbstractFacade<credentialsClient> {
                 }
             }
         }
-        return Response.ok().entity("La password per a " + c.getUsername() + " es: " + c.getPassword()).build();
+        return Response.ok().entity(c.getPassword()).build();
     }
 
     /**
