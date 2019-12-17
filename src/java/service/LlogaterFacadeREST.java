@@ -89,6 +89,10 @@ public class LlogaterFacadeREST extends AbstractFacade<Llogater> {
      * s'executa quan la url és: /webresources/tenant/processarToken i es passa
      * en json el token
      *
+     * passar en tots un query param amb el nom d'usuari, i verificar que aquest
+     * tingui token. En cas de que no en tingui, pos ja no en fem cas
+     * En cas de que tingui, ho verifiquem avere si es correcte
+     * 
      * @param json token
      * @return token emmagatzemat correctament o no si es invalid
      */

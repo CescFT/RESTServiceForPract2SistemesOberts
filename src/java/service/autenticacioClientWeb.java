@@ -15,6 +15,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import autenticacio.token;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -49,6 +50,43 @@ public class autenticacioClientWeb extends AbstractFacade<credentialsClient> {
         super(credentialsClient.class);
     }
     
+    
+      /**
+       * Aixo es fer un reset password
+       * @param client
+       * @return 
+       */
+    @PUT
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/modifyPassword")
+    public Response modifyPassword(credentialsClient client){
+        if(client == null)
+            return Response.status(Response.Status.NO_CONTENT).entity("No hi ha informació").build();
+        if(client.getUsername().equals("") || null == client.getUsername())
+            return Response.status(Response.Status.NO_CONTENT).entity("No hi ha el nom d'usuari.").build();
+        
+        if(client.getPassword().equals("") || null == client.getPassword())
+            return Response.status(Response.Status.NO_CONTENT).entity("No hi ha la contrassenya.").build();
+        
+        
+        try{
+            credentialsClient clientW=super.findClientAutoritizat(client.getUsername());
+            if(client.getPassword().length()<8)
+                return Response.status(Response.Status.BAD_REQUEST).entity("La contrassenya ha de tenir una llargada superior a 8 caracters").build();
+            clientW.setPassword(client.getPassword());
+            super.edit(clientW);
+            return Response.status(Response.Status.OK).entity(clientW).build();
+        }catch(Exception e){
+            return Response.status(Response.Status.NO_CONTENT).entity("No hi ha cap usuari amb aquest username.").build();
+        }
+        
+    }
+    /**
+     * Aixo es fer un registre en la pagina web
+     * @param client
+     * @return 
+     */
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -70,6 +108,10 @@ public class autenticacioClientWeb extends AbstractFacade<credentialsClient> {
             credentialsClient clientW=super.findClientAutoritizat(client.getUsername());
             return Response.status(Response.Status.UNAUTHORIZED).entity("Ja existeix un usuari amb aquest nom").build();
         }catch(Exception e){
+            if(client.getPassword().length()<8)
+                return Response.status(Response.Status.UNAUTHORIZED).entity("La contrassenya no es segura. Més de 8 caracters.").build();
+            String token = getToken(client.getUsername());
+            client.setTokenAutoritzacio(new token(token));
             super.create(client);
         }
         
@@ -83,6 +125,7 @@ public class autenticacioClientWeb extends AbstractFacade<credentialsClient> {
      * la contrassenya sigui correcte i coincideixi amb la del client. Si és
      * així retorna el token del client per continuar amb l'autenticació. Es
      * crida quan la url és : /webresources/autenticacio
+     * ES FER UN LOGIN
      *
      * @param client nom del client
      * @return token del client
