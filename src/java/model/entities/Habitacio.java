@@ -59,6 +59,10 @@ public class Habitacio implements Serializable {
 
     @Embedded
     private Requeriment requeriment;
+    
+    @Column(name="IMATGE_URL")
+    @Size(max=500)
+    private String urlImatge;
 
     @OneToOne
     private Llogater llogater;
@@ -72,6 +76,23 @@ public class Habitacio implements Serializable {
         return tipusHabitacio;
     }
 
+    /**
+     * getter de la url de la imatge
+     * @return urlimatge
+     */
+    public String getUrlImatge() {
+        return urlImatge;
+    }
+
+    /**
+     * setter de la url de la imatge
+     * @param urlImatge urlimatge
+     */
+    public void setUrlImatge(String urlImatge) {
+        this.urlImatge = urlImatge;
+    }
+
+    
     /**
      * setter del tipus habitacio
      *
@@ -243,7 +264,7 @@ public class Habitacio implements Serializable {
         hash += (idHabitacio != null ? idHabitacio.hashCode() : 0);
         return hash;
     }
-
+    
     /**
      * tostring
      *
@@ -251,7 +272,10 @@ public class Habitacio implements Serializable {
      */
     @Override
     public String toString() {
-        return "Habitacio{" + "idHabitacio=" + idHabitacio + ", descripcio=" + descripcio + ", adresa=" + adresa + ", ciutat=" + ciutat + ", tipusHabitacio=" + tipusHabitacio + ", preuMes=" + preuMes + ", requeriment=" + requeriment + ", llogater=" + llogater + '}';
+        return "Habitacio{" + "idHabitacio=" + idHabitacio + ", descripcio=" + descripcio + ", adresa=" + adresa + ", ciutat=" + ciutat + ", tipusHabitacio=" + tipusHabitacio + ", preuMes=" + preuMes + ", requeriment=" + requeriment + ", urlImatge=" + urlImatge + ", llogater=" + llogater + '}';
     }
+
+    
+    
 
 }
