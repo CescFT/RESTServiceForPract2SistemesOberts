@@ -64,6 +64,24 @@ public class Habitacio implements Serializable {
     @Size(max=500)
     private String urlImatge;
 
+    private Boolean ocupada;
+
+    /**
+     * getter habitacio ocupada
+     * @return ocupada
+     */
+    public Boolean getOcupada() {
+        return ocupada;
+    }
+
+    /**
+     * setter habitacio ocupada
+     * @param ocupada ocupada
+     */
+    public void setOcupada(Boolean ocupada) {
+        this.ocupada = ocupada;
+    }
+    
     @OneToOne
     private Llogater llogater;
 
@@ -264,6 +282,7 @@ public class Habitacio implements Serializable {
         hash += (idHabitacio != null ? idHabitacio.hashCode() : 0);
         return hash;
     }
+
     
     /**
      * tostring
@@ -272,10 +291,7 @@ public class Habitacio implements Serializable {
      */
     @Override
     public String toString() {
-        return "Habitacio{" + "idHabitacio=" + idHabitacio + ", descripcio=" + descripcio + ", adresa=" + adresa + ", ciutat=" + ciutat + ", tipusHabitacio=" + tipusHabitacio + ", preuMes=" + preuMes + ", requeriment=" + requeriment + ", urlImatge=" + urlImatge + ", llogater=" + llogater + '}';
+        return "Habitacio{" + "idHabitacio=" + idHabitacio + ", descripcio=" + descripcio + ", adresa=" + adresa + ", ciutat=" + ciutat + ", tipusHabitacio=" + tipusHabitacio + ", preuMes=" + preuMes + ", requeriment=" + requeriment + ", urlImatge=" + urlImatge + ", ocupada=" + ocupada + ", llogater=" + llogater + '}';
     }
-
-    
-    
-
+   
 }
