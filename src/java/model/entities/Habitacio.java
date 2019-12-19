@@ -65,6 +65,28 @@ public class Habitacio implements Serializable {
     private String urlImatge;
 
     private Boolean ocupada;
+    
+    @Column(name="NOM_HABITACIO")
+    @Size(max=500)
+    private String nomHabitacio;
+
+    /**
+     * getter nom habitacio
+     * @return nom habitacio
+     */
+    public String getNomHabitacio() {
+        return nomHabitacio;
+    }
+
+    /**
+     * setter nom habitacio
+     * @param nomHabitacio nom habitacio
+     */
+    public void setNomHabitacio(String nomHabitacio) {
+        this.nomHabitacio = nomHabitacio;
+    }
+    
+    
 
     /**
      * getter habitacio ocupada
@@ -283,7 +305,6 @@ public class Habitacio implements Serializable {
         return hash;
     }
 
-    
     /**
      * tostring
      *
@@ -291,7 +312,7 @@ public class Habitacio implements Serializable {
      */
     @Override
     public String toString() {
-        return "Habitacio{" + "idHabitacio=" + idHabitacio + ", descripcio=" + descripcio + ", adresa=" + adresa + ", ciutat=" + ciutat + ", tipusHabitacio=" + tipusHabitacio + ", preuMes=" + preuMes + ", requeriment=" + requeriment + ", urlImatge=" + urlImatge + ", ocupada=" + ocupada + ", llogater=" + llogater + '}';
+        return "Habitacio{" + "idHabitacio=" + idHabitacio + ", descripcio=" + descripcio + ", adresa=" + adresa + ", ciutat=" + ciutat + ", tipusHabitacio=" + tipusHabitacio + ", preuMes=" + preuMes + ", requeriment=" + requeriment + ", urlImatge=" + urlImatge + ", ocupada=" + ocupada + ", nomHabitacio=" + nomHabitacio + ", llogater=" + llogater + '}';
     }
-   
+
 }
