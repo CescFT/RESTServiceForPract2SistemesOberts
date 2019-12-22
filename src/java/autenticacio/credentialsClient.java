@@ -25,12 +25,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 })
 
 public class credentialsClient implements Serializable {
+
     @Id
     @Column(name = "USERNAME")
     @Size(max = 500)
     private String username;
 
-    
     @Column(name = "PASSWORD")
     @Size(max = 500)
     private String password;
@@ -41,6 +41,26 @@ public class credentialsClient implements Serializable {
 
     @Embedded
     private token tokenAutoritzacio;
+
+    private Boolean autenticat;
+
+    /**
+     * getter autenticat
+     *
+     * @return cert o fals
+     */
+    public Boolean getAutenticat() {
+        return autenticat;
+    }
+
+    /**
+     * setter autenticat
+     *
+     * @param autenticat autenticat
+     */
+    public void setAutenticat(Boolean autenticat) {
+        this.autenticat = autenticat;
+    }
 
     /**
      * Contructor buit
@@ -151,7 +171,7 @@ public class credentialsClient implements Serializable {
      */
     @Override
     public String toString() {
-        return "credentialsClient{" + "username=" + username + ", password=" + password + ", email=" + email + ", tokenAutoritzacio=" + tokenAutoritzacio + '}';
+        return "credentialsClient{" + "username=" + username + ", password=" + password + ", email=" + email + ", tokenAutoritzacio=" + tokenAutoritzacio + ", autenticat=" + autenticat + '}';
     }
 
 }
