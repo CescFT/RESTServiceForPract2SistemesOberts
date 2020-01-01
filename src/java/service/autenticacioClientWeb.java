@@ -49,83 +49,115 @@ public class autenticacioClientWeb extends AbstractFacade<credentialsClient> {
     public autenticacioClientWeb() {
         super(credentialsClient.class);
     }
-    
-    
-      /**
-       * Aixo es fer un reset password
-       * @param client
-       * @return 
-       */
+
+    /**
+     * Aixo es fer un reset password
+     *
+     * @param client
+     * @return
+     */
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/modifyPassword")
-    public Response modifyPassword(credentialsClient client){
-        if(client == null)
+    public Response modifyPassword(credentialsClient client) {
+        if (client == null) {
             return Response.status(Response.Status.NO_CONTENT).entity("No hi ha informació").build();
-        if(client.getUsername().equals("") || null == client.getUsername())
+        }
+        if (client.getUsername().equals("") || null == client.getUsername()) {
             return Response.status(Response.Status.NO_CONTENT).entity("No hi ha el nom d'usuari.").build();
-        
-        if(client.getPassword().equals("") || null == client.getPassword())
+        }
+
+        if (client.getPassword().equals("") || null == client.getPassword()) {
             return Response.status(Response.Status.NO_CONTENT).entity("No hi ha la contrassenya.").build();
-        
-        
-        try{
-            credentialsClient clientW=super.findClientAutoritizat(client.getUsername());
-            if(client.getPassword().length()<8)
+        }
+
+        try {
+            credentialsClient clientW = super.findClientAutoritizat(client.getUsername());
+            if (client.getPassword().length() < 8) {
                 return Response.status(Response.Status.BAD_REQUEST).entity("La contrassenya ha de tenir una llargada superior a 8 caracters").build();
+            }
             clientW.setPassword(client.getPassword());
             super.edit(clientW);
             return Response.status(Response.Status.OK).entity(clientW).build();
-        }catch(Exception e){
+        } catch (Exception e) {
             return Response.status(Response.Status.NO_CONTENT).entity("No hi ha cap usuari amb aquest username.").build();
         }
-        
+
     }
+
     /**
      * Aixo es fer un registre en la pagina web
+     *
      * @param client
-     * @return 
+     * @return
      */
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/newClient")
-    public Response createClientWeb(credentialsClient client){
-        if(client == null)
+    public Response createClientWeb(credentialsClient client) {
+        if (client == null) {
             return Response.status(Response.Status.NO_CONTENT).entity("No hi ha informació.").build();
-        
-        if(client.getUsername().equals("") || null == client.getUsername())
+        }
+
+        if (client.getUsername().equals("") || null == client.getUsername()) {
             return Response.status(Response.Status.NO_CONTENT).entity("No hi ha el nom d'usuari.").build();
-        
-        if(client.getPassword().equals("") || null == client.getPassword())
+        }
+
+        if (client.getPassword().equals("") || null == client.getPassword()) {
             return Response.status(Response.Status.NO_CONTENT).entity("No hi ha la contrassenya.").build();
-        
-        if(client.getEmail()==null || client.getEmail().equals(""))
+        }
+
+        if (client.getEmail() == null || client.getEmail().equals("")) {
             return Response.status(Response.Status.NO_CONTENT).entity("No hi ha correu electronic.").build();
-        
-        try{
-            credentialsClient clientW=super.findClientAutoritizat(client.getUsername());
+        }
+
+        try {
+            credentialsClient clientW = super.findClientAutoritizat(client.getUsername());
             return Response.status(Response.Status.UNAUTHORIZED).entity("Ja existeix un usuari amb aquest nom").build();
-        }catch(Exception e){
-            if(client.getPassword().length()<8)
+        } catch (Exception e) {
+            if (client.getPassword().length() < 8) {
                 return Response.status(Response.Status.UNAUTHORIZED).entity("La contrassenya no es segura. Més de 8 caracters.").build();
+            }
             String token = getToken(client.getUsername());
             client.setTokenAutoritzacio(new token(token));
             super.create(client);
         }
-        
-        
+
         return Response.status(Response.Status.CREATED).entity(client).build();
         //return Response.status(Response.Status.OK).entity(client).build();
+    }
+
+    @PUT
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/logoutUser")
+    public Response logoutUser(credentialsClient client) {
+        if (client == null) {
+            return Response.status(Response.Status.NO_CONTENT).entity("client null").build();
+        }
+        try {
+            credentialsClient c = super.findClientAutoritizat(client.getUsername());
+            if (c.getAutenticat() == true) {
+                c.setAutenticat(Boolean.FALSE);
+                c.setTokenAutoritzacio(null);
+                super.edit(c);
+                return Response.status(Response.Status.OK).entity(client).build();
+            } else {
+                return Response.status(Response.Status.BAD_REQUEST).entity("no autenticat").build();
+            }
+        } catch (NullPointerException e) {
+            return Response.status(Response.Status.FORBIDDEN).entity("ha hagut algun error").build();
+        }
+
     }
 
     /**
      * Mètode HTTP POST que permet l'autenticació amb els clients. Comprova que
      * la contrassenya sigui correcte i coincideixi amb la del client. Si és
      * així retorna el token del client per continuar amb l'autenticació. Es
-     * crida quan la url és : /webresources/autenticacio
-     * ES FER UN LOGIN
+     * crida quan la url és : /webresources/autenticacio ES FER UN LOGIN
      *
      * @param client nom del client
      * @return token del client
@@ -134,8 +166,9 @@ public class autenticacioClientWeb extends AbstractFacade<credentialsClient> {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response authenticationClient(credentialsClient client) {
-        if(client == null)
+        if (client == null) {
             return Response.status(Response.Status.NO_CONTENT).entity("client null").build();
+        }
         if (client.getUsername() == null || client.getPassword() == null) {
             return Response.status(Response.Status.FORBIDDEN).entity("Falta usuari o contrassenya").build();
         }
@@ -146,6 +179,7 @@ public class autenticacioClientWeb extends AbstractFacade<credentialsClient> {
                 credentialsClient c = super.findClientAutoritizat(client.getUsername());
                 if (c.getTokenAutoritzacio() == null) {
                     c.setTokenAutoritzacio(new token(token));
+                    c.setAutenticat(Boolean.TRUE);
                     super.edit(c);
                     return Response.status(Response.Status.OK).entity(c.getTokenAutoritzacio()).build();
                 } else {
