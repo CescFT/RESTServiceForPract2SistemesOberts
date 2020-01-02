@@ -120,8 +120,7 @@ public class autenticacioClientWeb extends AbstractFacade<credentialsClient> {
             if (client.getPassword().length() < 8) {
                 return Response.status(Response.Status.UNAUTHORIZED).entity("La contrassenya no es segura. Més de 8 caracters.").build();
             }
-            String token = getToken(client.getUsername());
-            client.setTokenAutoritzacio(new token(token));
+            client.setAutenticat(Boolean.FALSE);
             super.create(client);
         }
 
