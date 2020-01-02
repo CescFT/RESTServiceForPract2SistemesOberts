@@ -132,12 +132,29 @@ public class autenticacioClientWeb extends AbstractFacade<credentialsClient> {
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @Path("/logoutUser")
+    @Path("logoutUser")
     public Response logoutUser(credentialsClient client) {
+        //return Response.status(Response.Status.OK).entity("hola").build();
         if (client == null) {
             return Response.status(Response.Status.NO_CONTENT).entity("client null").build();
         }
-        try {
+        try{
+            List<credentialsClient> llistaClients = super.findAllClientsAutoritzats();
+            for(credentialsClient c : llistaClients){
+                if(c.getUsername().equals(client.getUsername())){
+                    if(c.getAutenticat() == true){
+                        c.setAutenticat(Boolean.FALSE);
+                        c.setTokenAutoritzacio(null);
+                        super.edit(c);
+                        return Response.status(Response.Status.OK).entity(c).build();
+                    }
+                }
+            }
+            return Response.status(Response.Status.BAD_REQUEST).entity("no autenticat").build();
+        }catch(NullPointerException e){
+            return Response.status(Response.Status.FORBIDDEN).entity("Algun error ha succeit.").build();
+        }
+        /*try {
             List<credentialsClient> llistaClients = super.findAllClientsAutoritzats();
             for (credentialsClient c : llistaClients) {
                 if ((c.getAutenticat() == true) && (c.getUsername().equals(client.getUsername()))) {
@@ -150,7 +167,7 @@ public class autenticacioClientWeb extends AbstractFacade<credentialsClient> {
             return Response.status(Response.Status.BAD_REQUEST).entity("no autenticat").build();
         } catch (NullPointerException e) {
             return Response.status(Response.Status.FORBIDDEN).entity("ha hagut algun error").build();
-        }
+        }*/
     }
 
     /**
