@@ -138,19 +138,19 @@ public class autenticacioClientWeb extends AbstractFacade<credentialsClient> {
             return Response.status(Response.Status.NO_CONTENT).entity("client null").build();
         }
         try {
-            credentialsClient c = super.findClientAutoritizat(client.getUsername());
-            if (c.getAutenticat() == true) {
-                c.setAutenticat(Boolean.FALSE);
-                c.setTokenAutoritzacio(null);
-                super.edit(c);
-                return Response.status(Response.Status.OK).entity(client).build();
-            } else {
-                return Response.status(Response.Status.BAD_REQUEST).entity("no autenticat").build();
+            List<credentialsClient> llistaClients = super.findAllClientsAutoritzats();
+            for (credentialsClient c : llistaClients) {
+                if ((c.getAutenticat() == true) && (c.getUsername().equals(client.getUsername()))) {
+                    c.setAutenticat(Boolean.FALSE);
+                    c.setTokenAutoritzacio(null);
+                    super.edit(c);
+                    return Response.status(Response.Status.OK).entity(client).build();
+                }
             }
+            return Response.status(Response.Status.BAD_REQUEST).entity("no autenticat").build();
         } catch (NullPointerException e) {
             return Response.status(Response.Status.FORBIDDEN).entity("ha hagut algun error").build();
         }
-
     }
 
     /**
