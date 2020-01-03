@@ -309,6 +309,19 @@ public class LlogaterFacadeREST extends AbstractFacade<Llogater> {
         }
 
     }
+    
+    @DELETE
+    @Path("eliminarToken")
+    public Response removeToken() {
+
+        if (token != null) {
+            token.setTokenAutoritzacio(null);
+            return Response.status(Response.Status.OK).entity("Eliminat.").build();
+        } else {
+            return Response.status(Response.Status.UNAUTHORIZED).entity("No t'has autenticat :(").build();
+        }
+
+    }
 
     /**
      * Mètode HTTP GET que cerca la informació del llogater amb el id passat per
