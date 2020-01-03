@@ -123,7 +123,7 @@ public class HabitacioFacadeREST extends AbstractFacade<Habitacio> {
         }
         Habitacio hab = super.find(Long.valueOf(id));
         if (hab != null) {
-            return Response.ok(hab, MediaType.APPLICATION_JSON).build();
+            return Response.status(Response.Status.OK).entity(hab).build();
         } else {
             return Response.status(Response.Status.BAD_REQUEST).entity("ID: " + id + " no disponible.").build();
         }
