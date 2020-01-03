@@ -2,6 +2,8 @@ package service;
 
 import autenticacio.credentialsClient;
 import autenticacio.token;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -14,6 +16,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -90,9 +93,9 @@ public class LlogaterFacadeREST extends AbstractFacade<Llogater> {
      * en json el token
      *
      * passar en tots un query param amb el nom d'usuari, i verificar que aquest
-     * tingui token. En cas de que no en tingui, pos ja no en fem cas
-     * En cas de que tingui, ho verifiquem avere si es correcte
-     * 
+     * tingui token. En cas de que no en tingui, pos ja no en fem cas En cas de
+     * que tingui, ho verifiquem avere si es correcte
+     *
      * @param json token
      * @return token emmagatzemat correctament o no si es invalid
      */
@@ -119,11 +122,13 @@ public class LlogaterFacadeREST extends AbstractFacade<Llogater> {
     @GET
     @Path("getTokenAutenticat")
     @Produces({"application/json", "application/xml"})
-    public Response getTokenAutenticat(){
-        if(this.getToken() == null)
+    public Response getTokenAutenticat() {
+        if (this.getToken() == null) {
             return Response.status(Response.Status.NO_CONTENT).entity("token null").build();
+        }
         return Response.status(Response.Status.OK).entity(this.getToken()).build();
     }
+
     /**
      * Mètode HTTP POST que permet fer el renting d'un llogater a una habitació.
      * S'executa quan la url és: /webresources/tenant/id/rent
@@ -149,9 +154,11 @@ public class LlogaterFacadeREST extends AbstractFacade<Llogater> {
                 return Response.status(Response.Status.NO_CONTENT).entity("El llogater amb id: " + id + " no es troba a la base de dades.").build();
             } else {
                 if (comprovarRequeriments(hab, llogater)) {
+                    
+                    llogater.setNumLlogades(llogater.getNumLlogades() + 1);
                     Habitacio hab1 = super.findWithId(hab.getIdHabitacio());
                     hab1.setLlogater(llogater);
-
+                    hab1.setOcupada(Boolean.TRUE);
                     getEntityManager().merge(hab1);
                     return Response.status(Response.Status.CREATED).entity(hab1).build();
                 } else {
@@ -164,6 +171,24 @@ public class LlogaterFacadeREST extends AbstractFacade<Llogater> {
         }
     }
 
+    @PUT
+    @Path("nouDia")
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response resetContadorRenting(Llogater llogater){
+        if(llogater == null)
+            return Response.status(Response.Status.NO_CONTENT).entity("Per a fer anar aquest mètode has de passar un llogater en JSON!").build();
+        else{
+            Llogater tenant = super.find(llogater.getId());
+            if(tenant != null){
+                tenant.setNumLlogades(0);
+                super.edit(tenant);
+                return Response.status(Response.Status.OK).entity(tenant).build();
+            }else{
+                return Response.status(Response.Status.BAD_REQUEST).entity("no llogater").build();
+            }
+        }
+    }
     /**
      * Mètode privat que verifica si el tenant compleix els requeriments de la
      * habitació i la pot llogar
@@ -265,14 +290,14 @@ public class LlogaterFacadeREST extends AbstractFacade<Llogater> {
             if (tenant != null) {
                 if (super.isTenant(super.findAllRooms(), tenant)) {
                     List<Habitacio> llistaHabitacionsTenant = super.returnHabitacioClient(tenant);
-                    
-                    for (Habitacio hab : llistaHabitacionsTenant){
+
+                    for (Habitacio hab : llistaHabitacionsTenant) {
                         hab.setLlogater(null);
                         getEntityManager().merge(hab);
                     }
 
                     super.remove(tenant);
-                    return Response.ok().entity("Llogater eliminat correctament i "+llistaHabitacionsTenant.size()+"habitacio/ns lliures.").build();
+                    return Response.ok().entity("Llogater eliminat correctament i " + llistaHabitacionsTenant.size() + "habitacio/ns lliures.").build();
                 }
             }
             return Response.status(Response.Status.NO_CONTENT).entity(id + " no disponible").build();
@@ -309,7 +334,7 @@ public class LlogaterFacadeREST extends AbstractFacade<Llogater> {
         }
 
     }
-    
+
     @DELETE
     @Path("eliminarToken")
     public Response removeToken() {
