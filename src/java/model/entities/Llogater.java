@@ -120,7 +120,7 @@ public class Llogater implements Serializable {
      */
     @Override
     public String toString() {
-        return "Llogater{" + "id=" + id + ", info=" + info + '}';
+        return "{" + "id:\"" + id + "\", info:" + info + ", numLlogades:\"" + numLlogades +"\"}";
     }
 
 }
