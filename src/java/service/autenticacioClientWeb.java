@@ -49,48 +49,12 @@ public class autenticacioClientWeb extends AbstractFacade<credentialsClient> {
     public autenticacioClientWeb() {
         super(credentialsClient.class);
     }
-
+    
     /**
-     * Aixo es fer un reset password
+     * Mètode HTTP POST per a fer un registre en la pagina web.
      *
-     * @param client
-     * @return
-     */
-    @PUT
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Path("/modifyPassword")
-    public Response modifyPassword(credentialsClient client) {
-        if (client == null) {
-            return Response.status(Response.Status.NO_CONTENT).entity("No hi ha informació").build();
-        }
-        if (client.getUsername().equals("") || null == client.getUsername()) {
-            return Response.status(Response.Status.NO_CONTENT).entity("No hi ha el nom d'usuari.").build();
-        }
-
-        if (client.getPassword().equals("") || null == client.getPassword()) {
-            return Response.status(Response.Status.NO_CONTENT).entity("No hi ha la contrassenya.").build();
-        }
-
-        try {
-            credentialsClient clientW = super.findClientAutoritizat(client.getUsername());
-            if (client.getPassword().length() < 8) {
-                return Response.status(Response.Status.BAD_REQUEST).entity("La contrassenya ha de tenir una llargada superior a 8 caracters").build();
-            }
-            clientW.setPassword(client.getPassword());
-            super.edit(clientW);
-            return Response.status(Response.Status.OK).entity(clientW).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.NO_CONTENT).entity("No hi ha cap usuari amb aquest username.").build();
-        }
-
-    }
-
-    /**
-     * Aixo es fer un registre en la pagina web
-     *
-     * @param client
-     * @return
+     * @param client client a registrar
+     * @return client registrat
      */
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -128,6 +92,11 @@ public class autenticacioClientWeb extends AbstractFacade<credentialsClient> {
         //return Response.status(Response.Status.OK).entity(client).build();
     }
 
+    /**
+     * Mètode HTTP PUT per a fer el log out de l'usuari
+     * @param client client a fer logout
+     * @return logout usuari
+     */
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -153,20 +122,7 @@ public class autenticacioClientWeb extends AbstractFacade<credentialsClient> {
         }catch(NullPointerException e){
             return Response.status(Response.Status.FORBIDDEN).entity("Algun error ha succeit.").build();
         }
-        /*try {
-            List<credentialsClient> llistaClients = super.findAllClientsAutoritzats();
-            for (credentialsClient c : llistaClients) {
-                if ((c.getAutenticat() == true) && (c.getUsername().equals(client.getUsername()))) {
-                    c.setAutenticat(Boolean.FALSE);
-                    c.setTokenAutoritzacio(null);
-                    super.edit(c);
-                    return Response.status(Response.Status.OK).entity(client).build();
-                }
-            }
-            return Response.status(Response.Status.BAD_REQUEST).entity("no autenticat").build();
-        } catch (NullPointerException e) {
-            return Response.status(Response.Status.FORBIDDEN).entity("ha hagut algun error").build();
-        }*/
+        
     }
 
     /**

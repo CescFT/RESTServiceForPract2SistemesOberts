@@ -41,73 +41,6 @@ public class HabitacioFacadeREST extends AbstractFacade<Habitacio> {
     }
 
     /**
-     * Mètode HTTP POST per a generar una nova habitacio en base a un JSON, es
-     * crida quan la url és: /webresources/room
-     *
-     * @param entity habitacio
-     * @return la habitacio emmagatzemada
-     */
-    @POST
-    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public Response createHabitacio(Habitacio entity) {
-        if (entity == null) {
-            return Response.status(Response.Status.NO_CONTENT).entity("No ve un JSON informat.").build();
-        } else {
-            //mirar els camps q s'omplen buits i omplir-los jo!
-            super.create(entity);
-            return Response.status(Response.Status.CREATED).entity(entity).build();
-        }
-    }
-
-    /**
-     * Mètode HTTP PUT que fa un update de la habitacio amb id passada pel path.
-     * Es crida quan es fa: /webresources/room/id
-     *
-     * @param entity habitacio
-     * @return la habitacio modificada
-     */
-    @PUT
-    @Path("{id}")
-    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public Response editHabitacio(@PathParam("id") Integer id, Habitacio entity) {
-        if (id == null) {
-            return Response.status(Response.Status.NO_CONTENT).entity("No hi ha un id informat").build();
-        }
-        Habitacio h = super.find(Long.valueOf(id));
-        if (entity == null) {
-            return Response.status(Response.Status.NO_CONTENT).entity("No ve un JSON informat").build();
-        } else {
-            if (h == null) {
-                return Response.status(Response.Status.NO_CONTENT).entity("No hi ha cap habitació amb aquest id").build();
-            }
-            super.edit(entity);
-            return Response.ok().entity(entity).build();
-        }
-    }
-
-    /**
-     * Mètode HTTP DELETE que elimina la habitació passada per paràmetre, es
-     * crida quan la url és: /webresources/room/id
-     *
-     * @param id identificador
-     * @return eliminacio de la habitacio
-     */
-    @DELETE
-    @Path("{id}")
-    public Response remove(@PathParam("id") Integer id) {
-        if (id == null) {
-            return Response.status(Response.Status.NO_CONTENT).entity("Id no informat").build();
-        }
-        Habitacio hab = super.find(Long.valueOf(id));
-        if (hab != null) {
-            super.remove(hab);
-            return Response.ok().entity("Habitacio esborrada correctament!").build();
-        }
-
-        return Response.status(Response.Status.NO_CONTENT).entity("Id no disponible").build();
-    }
-
-    /**
      * Mètode HTTP GET que s'executa quan la url és: /webresources/room/id
      * Retorna tota la informació de la habitació amb id passada pel path param
      *
@@ -175,6 +108,11 @@ public class HabitacioFacadeREST extends AbstractFacade<Habitacio> {
 
     }
     
+    /**
+     * Mètode HTTP GET per a retornar totes les habitacions disponibles.
+     * @param criterion criteri (asc o desc)
+     * @return totes les habitacions
+     */
     @GET
     @Path("allRooms")
     @Produces({"application/json", "application/xml"})

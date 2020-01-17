@@ -2,8 +2,6 @@ package service;
 
 import autenticacio.credentialsClient;
 import autenticacio.token;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -16,7 +14,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -119,16 +116,6 @@ public class LlogaterFacadeREST extends AbstractFacade<Llogater> {
         }
     }
 
-    @GET
-    @Path("getTokenAutenticat")
-    @Produces({"application/json", "application/xml"})
-    public Response getTokenAutenticat() {
-        if (this.getToken() == null) {
-            return Response.status(Response.Status.NO_CONTENT).entity("token null").build();
-        }
-        return Response.status(Response.Status.OK).entity(this.getToken()).build();
-    }
-
     /**
      * Mètode HTTP POST que permet fer el renting d'un llogater a una habitació.
      * S'executa quan la url és: /webresources/tenant/id/rent
@@ -171,6 +158,11 @@ public class LlogaterFacadeREST extends AbstractFacade<Llogater> {
         }
     }
 
+    /**
+     * Mètode HTTP PUT que posa a zero el numero de habitacions llogades donat un llogater
+     * @param llogater llogater a inicialitzar les llogades
+     * @return llogater actualitzat
+     */
     @PUT
     @Path("nouDia")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
@@ -189,6 +181,7 @@ public class LlogaterFacadeREST extends AbstractFacade<Llogater> {
             }
         }
     }
+    
     /**
      * Mètode privat que verifica si el tenant compleix els requeriments de la
      * habitació i la pot llogar
@@ -222,119 +215,11 @@ public class LlogaterFacadeREST extends AbstractFacade<Llogater> {
         }
         return false;
     }
-
+    
     /**
-     * Mètode HTTP POST que crea un nou llogater a la base de dades. S'executa
-     * quan la url és: /webresources/tenant
-     *
-     * @param entity llogater en JSON
-     * @return llogater
+     * Mètode HTTP DELETE per a eliminar el token
+     * @return resposta
      */
-    @POST
-    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public Response createLlogater(Llogater entity) {
-
-        if (token != null) {
-            if (entity == null) {
-                return Response.status(Response.Status.NO_CONTENT).entity("No es pot generar perquè no hi ha un JSON vàlid o informat").build();
-            } else {
-                super.create(entity);
-                return Response.status(Response.Status.CREATED).entity(entity).build();
-            }
-        } else {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("No t'has autenticat :(").build();
-        }
-
-    }
-
-    /**
-     * Mètode HTTP PUT que actualitza la informació de un llogater, es crida
-     * quan la url és: /webresources/tenant/id
-     *
-     * @param entity llogater en JSON
-     * @return el llogater actualitzat
-     */
-    @PUT
-    @Path("{id}")
-    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public Response editLlogater(@PathParam("id") Integer id, Llogater entity) {
-
-        if (token != null) {
-            Llogater ll = super.find(Long.valueOf(id));
-            if (entity == null || ll == null) {
-                return Response.status(Response.Status.NO_CONTENT).entity("No hi ha JSON informat o és invàlid").build();
-            } else {
-                super.edit(entity);
-                return Response.ok().entity(entity).build();
-            }
-        } else {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("No t'has autenticat :(").build();
-        }
-
-    }
-
-    /**
-     * Mètode HTTP DELETE que allibera la habitacio i elimina el tenant.
-     * S'executa quan la url és: /webresources/tenant/alliberarHabitacio/id
-     *
-     * @param id identificador del tenant
-     * @return eliminacio del llogater de la habitacio i la eliminacio del
-     * tenant
-     */
-    @DELETE
-    @Path("alliberarHabitacio/{id}")
-    public Response alliberarHabitacio(@PathParam("id") Integer id) {
-
-        if (token != null) {
-            Llogater tenant = super.find(Long.valueOf(id));
-            if (tenant != null) {
-                if (super.isTenant(super.findAllRooms(), tenant)) {
-                    List<Habitacio> llistaHabitacionsTenant = super.returnHabitacioClient(tenant);
-
-                    for (Habitacio hab : llistaHabitacionsTenant) {
-                        hab.setLlogater(null);
-                        getEntityManager().merge(hab);
-                    }
-
-                    super.remove(tenant);
-                    return Response.ok().entity("Llogater eliminat correctament i " + llistaHabitacionsTenant.size() + "habitacio/ns lliures.").build();
-                }
-            }
-            return Response.status(Response.Status.NO_CONTENT).entity(id + " no disponible").build();
-        } else {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("No t'has autenticat :(").build();
-        }
-    }
-
-    /**
-     * Mètode HTTP DELETE que elimina el llogater de la base de dades, s'executa
-     * quan la url és: /webresources/tenant/id
-     *
-     * @param id identificador del tenant
-     * @return eliminacio del llogater
-     */
-    @DELETE
-    @Path("{id}")
-    public Response remove(@PathParam("id") Integer id) {
-
-        if (token != null) {
-            Llogater tenant = super.find(Long.valueOf(id));
-            if (tenant != null) {
-                if (super.isTenant(super.findAllRooms(), tenant)) {
-                    return Response.status(Response.Status.PARTIAL_CONTENT).entity("No es pot esborrar perque té una habitacio.").build();
-                } else {
-                    super.remove(tenant);
-                    return Response.ok().entity("Llogater eliminat.").build();
-                }
-
-            }
-            return Response.status(Response.Status.NO_CONTENT).entity(id + " no disponible").build();
-        } else {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("No t'has autenticat :(").build();
-        }
-
-    }
-
     @DELETE
     @Path("eliminarToken")
     public Response removeToken() {
