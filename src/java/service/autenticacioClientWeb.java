@@ -165,65 +165,7 @@ public class autenticacioClientWeb extends AbstractFacade<credentialsClient> {
         }
 
     }
-
-    /**
-     * Mètode HTTP GET que cerca si el client està autenticat i retorna el seu
-     * token. Es crida quan la url és : /webresources/autenticacio/{username}
-     *
-     * @param username nom del client
-     * @return token del client si esta autenticat
-     */
-    @GET
-    @Path("{username}")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public Response getTokenOfUsername(@PathParam("username") String username) {
-        credentialsClient c = super.findClientAutoritizat(username);
-        if (c == null) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("No es troba aquest usuari web").build();
-        } else {
-            return Response.ok().entity(c).build();
-        }
-    }
-
-    /**
-     * Mètode HTTP GET cerca si el client esta autenticat i si el token es
-     * correcte. Si es així retorna la contrassenya del client. Es crida quan la
-     * url és : /webresources/autenticacio/{username}/{token}
-     *
-     * @param username nom del client
-     * @param token token del client
-     * @return la contrassenya del client en clar
-     */
-    @GET
-    @Path("{username}/{token}")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public Response getMevaContrassenya(@PathParam("username") String username, @PathParam("token") String token) {
-
-        credentialsClient c = super.findClientAutoritizat(username);
-        if (token == null) {
-            return Response.status(Response.Status.NO_CONTENT).entity("No hi ha token").build();
-        } else {
-            String substring = "-";
-            if (!token.contains(substring)) {
-                return Response.status(Response.Status.BAD_REQUEST).entity("Token invàlid. No té una forma autoritzada.").build();
-            } else {
-                if (username == null) {
-                    return Response.status(Response.Status.NOT_FOUND).entity("Username no informat.").build();
-                }
-                if (c == null) {
-                    return Response.status(Response.Status.NOT_FOUND).entity("No hi ha un usuari amb aquest username: " + username).build();
-                }
-
-                token tk = new token();
-                tk.setTokenAutoritzacio(token);
-                if (!c.getTokenAutoritzacio().compararTokens(tk)) {
-                    return Response.status(Response.Status.BAD_REQUEST).entity("El username " + username + " no té aquest token.").build();
-                }
-            }
-        }
-        return Response.ok().entity(c.getPassword()).build();
-    }
-
+    
     /**
      * Mètode HTTP GET que cerca si el client està autenticat i el retorna.
      *
