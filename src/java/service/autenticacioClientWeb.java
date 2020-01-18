@@ -214,6 +214,27 @@ public class autenticacioClientWeb extends AbstractFacade<credentialsClient> {
     }
 
     /**
+     * Metode per a obtenir la informació d'un client web especific
+     * @param client nom usuari
+     * @return info client web
+     */
+    @GET
+    @Produces("application/json")
+    @Path("infoClientWeb")
+    public Response getInfoClientWeb(@QueryParam("client") String client)
+    {
+        if(client == null)
+            return Response.status(Response.Status.BAD_REQUEST).entity("Nom Usuari no informat").build();
+        try{
+            credentialsClient cli = super.findClientAutoritizat(client);
+            if(cli == null)
+                return Response.status(Response.Status.NOT_FOUND).entity("No hi ha cap usuari amb aquest nom d'usuari.").build();
+            return Response.status(Response.Status.OK).entity(cli).build();
+        }catch(Exception e){
+            return Response.status(Response.Status.NOT_FOUND).entity("No hi ha cap usuari amb aquest nom.").build();
+        }
+    }
+    /**
      * Mètode que comprova si el client està autenticat i per tant si el seu nom
      * apareix a la base de dades i les contrassenyes coincideixen.
      *
