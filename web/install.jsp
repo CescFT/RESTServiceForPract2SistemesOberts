@@ -116,9 +116,9 @@
             ResultSet rsHab;
             for (String datum : dataHabitacions) {
                 trobat = false;
-                rsHab = stmt.executeQuery("SELECT ADREÇA FROM HABITACIO");
+                rsHab = stmt.executeQuery("SELECT ADREÇA, NOM_HABITACIO FROM HABITACIO");
                 while (rsHab.next()) {
-                    if (datum.contains(String.valueOf(rsHab.getString("ADREÇA")))) {
+                    if (datum.contains(String.valueOf(rsHab.getString("ADREÇA"))) && datum.contains(String.valueOf(rsHab.getString("NOM_HABITACIO")))) {
                         trobat = true;
                     }
                 }
